@@ -1,7 +1,7 @@
-var express = require("express"),
-    app = express(),
+var express    = require("express"),
+    app        = express(),
     bodyParser = require("body-parser"),
-    mongoose = require("mongoose");
+    mongoose   = require("mongoose");
 
 mongoose.connect("mongodb://localhost/yelp_camp");
 app.use(bodyParser.urlencoded({extended: true}));
@@ -10,31 +10,26 @@ app.set("view engine", "ejs");
 //Schema setup
 var campgroundSchema = new mongoose.Schema({
   name: String,
-  image: String
+  image: String,
+  description: String
 });
 
 var Campground = mongoose.model("Campground", campgroundSchema);
 
 Campground.create(
   {
-    name: "Chris' Camp",
-    image: "https://i.imgur.com/QakLAVj.jpg"
-  }, function(err, campground){
+    name: "Granite Hill",
+    image: "http://haileyidaho.com/wp-content/uploads/2015/01/Stanley-lake-camping-Credit-Carol-Waller-2011.jpg",
+    description: "Too many bugs, disgusting facilities and lots of angry bears. Would camp again."
+  },
+  function(err, campground){
     if(err){
       console.log(err);
-    } else {
-      console.log("Newly Created Campground");
+    }else{
+      console.log("New campground added via server.");
       console.log(campground);
     }
   });
-
-
-var campgrounds = [
-  {name: "Chris' Camp", image: "https://i.imgur.com/QakLAVj.jpg"},
-  {name: "Tent Town", image: "https://i.imgur.com/OFv3gAI.jpg"},
-  {name: "Sleep here in a tent, tho.", image: "https://i.imgur.com/7DNBKWj.jpg"}
-];
-
 
 app.get("/", function(req, res){
   res.render("landing");
@@ -42,22 +37,42 @@ app.get("/", function(req, res){
 
 
 //RESTful new campground creation
+
+//INDEX - shows all campgrounds currently in DB
 app.get("/campgrounds", function(req, res){
-  res.render("campgrounds", {campgrounds: campgrounds});
+  Campground.find({}, function(err, allCampgrounds){
+    if(err){
+      console.log(err);
+    } else {
+       res.render("campgrounds", {campgrounds: allCampgrounds});
+    }
+  });
 });
 
+//NEW - show form to create new campground
 app.get("/campgrounds/new", function(req, res){
   res.render("new");
 });
 
+//CREATE - creates new campgrounds and reroutes to INDEX
 app.post("/campgrounds", function(req, res){
   //get data from form and add to campgrounds array
   var name = req.body.name;
   var image = req.body.image;
   var newCampground = {name: name, image: image};
-  campgrounds.push(newCampground);
-  //redirect back to campgrounds page.
-  res.redirect("/campgrounds");
+  //Create a new campground and save to database
+  Campground.create(newCampground, function(err, newlyCreated){
+    if(err){
+        console.log(err);
+    }else{
+      res.redirect("/campgrounds");
+    }
+  });
+});
+
+//SHOW - shows more info about a single campground
+app.get("/campgrounds/:id", function(req, res){
+  res.render("show");
 });
 
 app.listen(3000, "localhost", function(){
