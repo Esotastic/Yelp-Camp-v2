@@ -44,7 +44,7 @@ app.get("/campgrounds", function(req, res){
     if(err){
       console.log(err);
     } else {
-       res.render("campgrounds", {campgrounds: allCampgrounds});
+       res.render("index", {campgrounds: allCampgrounds});
     }
   });
 });
@@ -72,6 +72,14 @@ app.post("/campgrounds", function(req, res){
 
 //SHOW - shows more info about a single campground
 app.get("/campgrounds/:id", function(req, res){
+  Campground.FindById(req.params.id, function(err, foundCampground){
+    if(err){
+      console.log(err);
+    }else{
+      res.render("show", {campground: foundCampground})
+    }
+  });
+  req.params.id
   res.render("show");
 });
 
