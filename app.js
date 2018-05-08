@@ -16,20 +16,20 @@ var campgroundSchema = new mongoose.Schema({
 
 var Campground = mongoose.model("Campground", campgroundSchema);
 
-Campground.create(
-  {
-    name: "Granite Hill",
-    image: "http://haileyidaho.com/wp-content/uploads/2015/01/Stanley-lake-camping-Credit-Carol-Waller-2011.jpg",
-    description: "Too many bugs, disgusting facilities and lots of angry bears. Would camp again."
-  },
-  function(err, campground){
-    if(err){
-      console.log(err);
-    }else{
-      console.log("New campground added via server.");
-      console.log(campground);
-    }
-  });
+// Campground.create(
+//   {
+//     name: "Granite Hill",
+//     image: "http://haileyidaho.com/wp-content/uploads/2015/01/Stanley-lake-camping-Credit-Carol-Waller-2011.jpg",
+//     description: "Too many bugs, disgusting facilities and lots of angry bears. Would camp again."
+//   },
+//   function(err, campground){
+//     if(err){
+//       console.log(err);
+//     }else{
+//       console.log("New campground added via server.");
+//       console.log(campground);
+//     }
+//   });
 
 app.get("/", function(req, res){
   res.render("landing");
@@ -59,7 +59,8 @@ app.post("/campgrounds", function(req, res){
   //get data from form and add to campgrounds array
   var name = req.body.name;
   var image = req.body.image;
-  var newCampground = {name: name, image: image};
+  var desc = req.body.description;
+  var newCampground = {name: name, image: image, description: desc};
   //Create a new campground and save to database
   Campground.create(newCampground, function(err, newlyCreated){
     if(err){
@@ -76,13 +77,11 @@ app.get("/campgrounds/:id", function(req, res){
     if(err){
       console.log(err);
     }else{
-      res.render("show", {campground: foundCampground})
+      res.render("show", {campground: foundCampground});
     }
   });
-  req.params.id
-  res.render("show");
 });
 
 app.listen(3000, "localhost", function(){
-  console.log("YelpCamp server is running.")
+  console.log("YelpCamp server is running.");
 });
