@@ -16,21 +16,6 @@ var campgroundSchema = new mongoose.Schema({
 
 var Campground = mongoose.model("Campground", campgroundSchema);
 
-// Campground.create(
-//   {
-//     name: "Granite Hill",
-//     image: "http://haileyidaho.com/wp-content/uploads/2015/01/Stanley-lake-camping-Credit-Carol-Waller-2011.jpg",
-//     description: "Too many bugs, disgusting facilities and lots of angry bears. Would camp again."
-//   },
-//   function(err, campground){
-//     if(err){
-//       console.log(err);
-//     }else{
-//       console.log("New campground added via server.");
-//       console.log(campground);
-//     }
-//   });
-
 app.get("/", function(req, res){
   res.render("landing");
 });
